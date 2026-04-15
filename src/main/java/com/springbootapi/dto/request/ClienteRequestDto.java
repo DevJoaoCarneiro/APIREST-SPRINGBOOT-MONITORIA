@@ -1,6 +1,5 @@
 package com.springbootapi.dto.request;
 
-
 public record ClienteRequestDto (
      String nome,
      String telefone,
