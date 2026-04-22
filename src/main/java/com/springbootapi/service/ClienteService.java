@@ -11,21 +11,13 @@ import java.util.List;
 @Service
 public class ClienteService {
 
-    private ClienteRepository clienteRepository;
+    private final ClienteRepository clienteRepository;
 
     public ClienteService(ClienteRepository clienteRepository) {
         this.clienteRepository = clienteRepository;
     }
 
     public ClienteResponseDto cadastrarCliente(ClienteRequestDto clienteRequestDto){
-        if(clienteRequestDto == null){
-            return new ClienteResponseDto(
-                    "Erro ao cadastrar um cliente",
-                    "400",
-                    "",
-                    ""
-            );
-        }
 
         Cliente cliente = new Cliente();
 
@@ -47,6 +39,37 @@ public class ClienteService {
 
     public List<Cliente> buscarTodosOsClientes(){
         return clienteRepository.findAll();
+
+    }
+
+    public ClienteResponseDto editaCliente(int id, ClienteRequestDto clienteRequestDto){
+        Cliente clienteEditado = clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Erro ao encontrar cliente"));
+
+        if(clienteRequestDto.nome() != null){
+            clienteEditado.setNome(clienteRequestDto.nome());
+        }
+
+        if(clienteRequestDto.email() != null){
+            clienteEditado.setEmail(clienteRequestDto.email());
+        }
+
+        if(clienteRequestDto.endereco() != null){
+            clienteEditado.setEndereco(clienteRequestDto.endereco());
+        }
+
+        if(clienteRequestDto.telefone() != null){
+            clienteEditado.setTelefone(clienteRequestDto.telefone());
+        }
+
+        clienteRepository.save(clienteEditado);
+
+        return new ClienteResponseDto(
+                "Cliente atualizado com sucesso",
+                "Updated Client",
+                clienteEditado.getNome(),
+                clienteEditado.getTelefone()
+        );
 
     }
 }

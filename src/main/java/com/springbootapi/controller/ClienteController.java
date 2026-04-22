@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/cliente")
 public class ClienteController {
-    private ClienteService clienteService;
+    private final ClienteService clienteService;
 
     public ClienteController(ClienteService clienteService) {
         this.clienteService = clienteService;
@@ -27,5 +27,11 @@ public class ClienteController {
     public ResponseEntity buscarTodosCliente(){
         var resposta = clienteService.buscarTodosOsClientes();
         return ResponseEntity.ok().body(resposta);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ClienteResponseDto> editaClientePorId(@PathVariable int id, @RequestBody ClienteRequestDto clienteRequestDto){
+        var response = clienteService.editaCliente(id, clienteRequestDto);
+        return ResponseEntity.ok().body(response);
     }
 }
