@@ -1,10 +1,11 @@
 package com.springbootapi.dto.response;
 
 public record ClienteResponseDto(
-        String mensagem,
-        String status,
+        Integer id,
         String nome,
-        String telefone
+        String email,
+        String telefone,
+        String endereco
 
 ) {
 }

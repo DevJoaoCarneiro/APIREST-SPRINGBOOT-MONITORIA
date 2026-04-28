@@ -1,12 +1,15 @@
 package com.springbootapi.controller;
 
 import com.springbootapi.dto.request.ClienteRequestDto;
+import com.springbootapi.dto.response.ApiResponse;
 import com.springbootapi.dto.response.ClienteResponseDto;
 import com.springbootapi.entidade.Cliente;
 import com.springbootapi.service.ClienteService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/cliente")
@@ -18,20 +21,27 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ClienteResponseDto> criarCliente(@RequestBody ClienteRequestDto clienteRequestDto){
+    public ResponseEntity<ApiResponse<ClienteResponseDto>> criarCliente(@RequestBody ClienteRequestDto clienteRequestDto){
         var resposta = clienteService.cadastrarCliente(clienteRequestDto);
        return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
 
     @GetMapping
-    public ResponseEntity buscarTodosCliente(){
+    public ResponseEntity<ApiResponse<List<ClienteResponseDto>>> buscarTodosCliente(){
         var resposta = clienteService.buscarTodosOsClientes();
         return ResponseEntity.ok().body(resposta);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponseDto> editaClientePorId(@PathVariable int id, @RequestBody ClienteRequestDto clienteRequestDto){
+    public ResponseEntity<ApiResponse<ClienteResponseDto>> editaClientePorId(@PathVariable int id, @RequestBody ClienteRequestDto clienteRequestDto){
         var response = clienteService.editaCliente(id, clienteRequestDto);
         return ResponseEntity.ok().body(response);
+    }
+
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletaClientePorId(@PathVariable int id){
+        clienteService.deletarUmCliente(id);
+        return ResponseEntity.noContent().build();
     }
 }

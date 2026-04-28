@@ -1,6 +1,7 @@
 package com.springbootapi.service;
 
 import com.springbootapi.dto.request.ClienteRequestDto;
+import com.springbootapi.dto.response.ApiResponse;
 import com.springbootapi.dto.response.ClienteResponseDto;
 import com.springbootapi.entidade.Cliente;
 import com.springbootapi.repository.ClienteRepository;
@@ -17,7 +18,7 @@ public class ClienteService {
         this.clienteRepository = clienteRepository;
     }
 
-    public ClienteResponseDto cadastrarCliente(ClienteRequestDto clienteRequestDto){
+    public ApiResponse<ClienteResponseDto> cadastrarCliente(ClienteRequestDto clienteRequestDto){
 
         Cliente cliente = new Cliente();
 
@@ -28,21 +29,42 @@ public class ClienteService {
 
         clienteRepository.save(cliente);
 
-        return new ClienteResponseDto(
-                "Cliente cadastrado com sucesso",
-                "201",
+        ClienteResponseDto dto = new ClienteResponseDto(
+                cliente.getId(),
                 cliente.getNome(),
-                cliente.getTelefone()
+                cliente.getEmail(),
+                cliente.getTelefone(),
+                cliente.getEndereco()
+        );
+
+        return new ApiResponse<>(
+                "Cliente Cadastrado com sucesso",
+                "sucesso",
+                dto
         );
 
     }
 
-    public List<Cliente> buscarTodosOsClientes(){
-        return clienteRepository.findAll();
+    public ApiResponse<List<ClienteResponseDto>> buscarTodosOsClientes(){
+        List<ClienteResponseDto> dto = clienteRepository.findAll()
+                .stream()
+                .map(x -> new ClienteResponseDto(
+                        x.getId(),
+                        x.getNome(),
+                        x.getEmail(),
+                        x.getTelefone(),
+                        x.getEndereco()
+                )).toList();
+
+        return new ApiResponse<>(
+                "Consulta realizada com sucesso",
+                "Sucesso",
+                dto
+        );
 
     }
 
-    public ClienteResponseDto editaCliente(int id, ClienteRequestDto clienteRequestDto){
+    public ApiResponse<ClienteResponseDto> editaCliente(int id, ClienteRequestDto clienteRequestDto){
         Cliente clienteEditado = clienteRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Erro ao encontrar cliente"));
 
@@ -64,12 +86,26 @@ public class ClienteService {
 
         clienteRepository.save(clienteEditado);
 
-        return new ClienteResponseDto(
-                "Cliente atualizado com sucesso",
-                "Updated Client",
+        ClienteResponseDto dto = new ClienteResponseDto(
+                clienteEditado.getId(),
                 clienteEditado.getNome(),
-                clienteEditado.getTelefone()
+                clienteEditado.getEmail(),
+                clienteEditado.getTelefone(),
+                clienteEditado.getEndereco()
         );
 
+        return new ApiResponse<>(
+                "Cliente editado com sucesso",
+                "sucesso",
+                dto
+        );
+
+    }
+
+    public void deletarUmCliente(int id){
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
+
+        clienteRepository.delete(cliente);
     }
 }
