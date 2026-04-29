@@ -4,8 +4,10 @@ import com.springbootapi.dto.request.ClienteRequestDto;
 import com.springbootapi.dto.response.ApiResponse;
 import com.springbootapi.dto.response.ClienteResponseDto;
 import com.springbootapi.entidade.Cliente;
+import com.springbootapi.expections.ResourceNotFoundExpection;
 import com.springbootapi.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
@@ -66,7 +68,7 @@ public class ClienteService {
 
     public ApiResponse<ClienteResponseDto> editaCliente(int id, ClienteRequestDto clienteRequestDto){
         Cliente clienteEditado = clienteRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Erro ao encontrar cliente"));
+                .orElseThrow(() -> new ResourceNotFoundExpection("Erro ao encontrar cliente"));
 
         if(clienteRequestDto.nome() != null){
             clienteEditado.setNome(clienteRequestDto.nome());
@@ -104,8 +106,27 @@ public class ClienteService {
 
     public void deletarUmCliente(int id){
         Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Cliente não encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundExpection("Cliente não encontrado"));
 
         clienteRepository.delete(cliente);
+    }
+
+    public ApiResponse<ClienteResponseDto> consultaClientePorId(int id){
+        Cliente cliente = clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundExpection("Cliente não encontrado"));
+
+        ClienteResponseDto dto = new ClienteResponseDto(
+                cliente.getId(),
+                cliente.getNome(),
+                cliente.getTelefone(),
+                cliente.getEmail(),
+                cliente.getEndereco()
+        );
+
+        return new ApiResponse<>(
+                "Cliente encontrado com sucesso",
+                "sucesso",
+                dto
+        );
     }
 }

@@ -5,6 +5,7 @@ import com.springbootapi.dto.response.ApiResponse;
 import com.springbootapi.dto.response.ClienteResponseDto;
 import com.springbootapi.entidade.Cliente;
 import com.springbootapi.service.ClienteService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +22,7 @@ public class ClienteController {
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<ClienteResponseDto>> criarCliente(@RequestBody ClienteRequestDto clienteRequestDto){
+    public ResponseEntity<ApiResponse<ClienteResponseDto>> criarCliente(@Valid @RequestBody ClienteRequestDto clienteRequestDto){
         var resposta = clienteService.cadastrarCliente(clienteRequestDto);
        return ResponseEntity.status(HttpStatus.CREATED).body(resposta);
     }
@@ -30,6 +31,13 @@ public class ClienteController {
     public ResponseEntity<ApiResponse<List<ClienteResponseDto>>> buscarTodosCliente(){
         var resposta = clienteService.buscarTodosOsClientes();
         return ResponseEntity.ok().body(resposta);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<ClienteResponseDto>> buscaClientePorId(@PathVariable int id){
+        var response = clienteService.consultaClientePorId(id);
+        return ResponseEntity.ok().body(response);
+
     }
 
     @PutMapping("/{id}")
@@ -44,4 +52,5 @@ public class ClienteController {
         clienteService.deletarUmCliente(id);
         return ResponseEntity.noContent().build();
     }
+
 }

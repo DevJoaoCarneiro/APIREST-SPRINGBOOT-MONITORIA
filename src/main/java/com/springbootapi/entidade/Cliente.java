@@ -18,13 +18,13 @@ public class Cliente {
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     private int id;
 
-    @Column(name = "nome")
+    @Column(name = "nome", nullable = false)
     private String nome;
 
-    @Column(name = "telefone")
+    @Column(name = "telefone", nullable = false)
     private String telefone;
 
-    @Column(name = "email")
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
     @Column(name = "endereco")
