@@ -7,7 +7,6 @@ import com.springbootapi.entidade.Cliente;
 import com.springbootapi.expections.ResourceNotFoundExpection;
 import com.springbootapi.repository.ClienteRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
 
 import java.util.List;
 
@@ -29,20 +28,20 @@ public class ClienteService {
         cliente.setEndereco(clienteRequestDto.endereco());
         cliente.setEmail(clienteRequestDto.email());
 
-        clienteRepository.save(cliente);
+        Cliente clienteSalvo = clienteRepository.save(cliente);
 
         ClienteResponseDto dto = new ClienteResponseDto(
-                cliente.getId(),
-                cliente.getNome(),
-                cliente.getEmail(),
-                cliente.getTelefone(),
-                cliente.getEndereco()
+            clienteSalvo.getId(),
+            clienteSalvo.getNome(),
+            clienteSalvo.getEmail(),
+            clienteSalvo.getTelefone(),
+            clienteSalvo.getEndereco()
         );
 
         return new ApiResponse<>(
                 "Cliente Cadastrado com sucesso",
                 "sucesso",
-                dto
+            dto
         );
 
     }
@@ -50,13 +49,14 @@ public class ClienteService {
     public ApiResponse<List<ClienteResponseDto>> buscarTodosOsClientes(){
         List<ClienteResponseDto> dto = clienteRepository.findAll()
                 .stream()
-                .map(x -> new ClienteResponseDto(
-                        x.getId(),
-                        x.getNome(),
-                        x.getEmail(),
-                        x.getTelefone(),
-                        x.getEndereco()
-                )).toList();
+            .map(cliente -> new ClienteResponseDto(
+                cliente.getId(),
+                cliente.getNome(),
+                cliente.getEmail(),
+                cliente.getTelefone(),
+                cliente.getEndereco()
+            ))
+                .toList();
 
         return new ApiResponse<>(
                 "Consulta realizada com sucesso",
@@ -67,8 +67,7 @@ public class ClienteService {
     }
 
     public ApiResponse<ClienteResponseDto> editaCliente(int id, ClienteRequestDto clienteRequestDto){
-        Cliente clienteEditado = clienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundExpection("Erro ao encontrar cliente"));
+                Cliente clienteEditado = findClienteById(id);
 
         if(clienteRequestDto.nome() != null){
             clienteEditado.setNome(clienteRequestDto.nome());
@@ -86,47 +85,50 @@ public class ClienteService {
             clienteEditado.setTelefone(clienteRequestDto.telefone());
         }
 
-        clienteRepository.save(clienteEditado);
+        Cliente clienteSalvo = clienteRepository.save(clienteEditado);
 
         ClienteResponseDto dto = new ClienteResponseDto(
-                clienteEditado.getId(),
-                clienteEditado.getNome(),
-                clienteEditado.getEmail(),
-                clienteEditado.getTelefone(),
-                clienteEditado.getEndereco()
+            clienteSalvo.getId(),
+            clienteSalvo.getNome(),
+            clienteSalvo.getEmail(),
+            clienteSalvo.getTelefone(),
+            clienteSalvo.getEndereco()
         );
 
         return new ApiResponse<>(
                 "Cliente editado com sucesso",
                 "sucesso",
-                dto
+            dto
         );
 
     }
 
     public void deletarUmCliente(int id){
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundExpection("Cliente não encontrado"));
+        Cliente cliente = findClienteById(id);
 
         clienteRepository.delete(cliente);
     }
 
     public ApiResponse<ClienteResponseDto> consultaClientePorId(int id){
-        Cliente cliente = clienteRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundExpection("Cliente não encontrado"));
+        Cliente cliente = findClienteById(id);
 
         ClienteResponseDto dto = new ClienteResponseDto(
-                cliente.getId(),
-                cliente.getNome(),
-                cliente.getTelefone(),
-                cliente.getEmail(),
-                cliente.getEndereco()
+            cliente.getId(),
+            cliente.getNome(),
+            cliente.getEmail(),
+            cliente.getTelefone(),
+            cliente.getEndereco()
         );
 
         return new ApiResponse<>(
                 "Cliente encontrado com sucesso",
                 "sucesso",
-                dto
+            dto
         );
+    }
+
+    private Cliente findClienteById(int id) {
+        return clienteRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundExpection("Cliente não encontrado"));
     }
 }

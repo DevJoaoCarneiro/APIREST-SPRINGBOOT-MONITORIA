@@ -3,7 +3,6 @@ package com.springbootapi.controller;
 import com.springbootapi.dto.request.ClienteRequestDto;
 import com.springbootapi.dto.response.ApiResponse;
 import com.springbootapi.dto.response.ClienteResponseDto;
-import com.springbootapi.entidade.Cliente;
 import com.springbootapi.service.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

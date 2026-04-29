@@ -22,7 +22,7 @@ public class GlobalHandleException {
 
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<ApiResponse<Void>> IllegalArgument(IllegalArgumentException ex){
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ApiResponse<>(
                         ex.getMessage(),
                         "erro",
@@ -33,7 +33,7 @@ public class GlobalHandleException {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> ExpectionGeneric(Exception ex){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                 new ApiResponse<>(
                         ex.getMessage(),
                         "error",
