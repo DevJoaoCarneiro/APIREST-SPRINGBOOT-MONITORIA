@@ -66,7 +66,7 @@ public class ClienteService {
 
     }
 
-    public ApiResponse<ClienteResponseDto> editaCliente(int id, ClienteRequestDto clienteRequestDto){
+    public ApiResponse<ClienteResponseDto> editaCliente(Long id, ClienteRequestDto clienteRequestDto){
                 Cliente clienteEditado = findClienteById(id);
 
         if(clienteRequestDto.nome() != null){
@@ -103,13 +103,13 @@ public class ClienteService {
 
     }
 
-    public void deletarUmCliente(int id){
+    public void deletarUmCliente(Long id){
         Cliente cliente = findClienteById(id);
 
         clienteRepository.delete(cliente);
     }
 
-    public ApiResponse<ClienteResponseDto> consultaClientePorId(int id){
+    public ApiResponse<ClienteResponseDto> consultaClientePorId(Long id){
         Cliente cliente = findClienteById(id);
 
         ClienteResponseDto dto = new ClienteResponseDto(
@@ -127,7 +127,7 @@ public class ClienteService {
         );
     }
 
-    private Cliente findClienteById(int id) {
+    private Cliente findClienteById(Long id) {
         return clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundExpection("Cliente não encontrado"));
     }

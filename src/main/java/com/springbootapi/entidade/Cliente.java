@@ -16,7 +16,7 @@ public class Cliente {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    private int id;
+    private Long id;
 
     @Column(name = "nome", nullable = false)
     private String nome;

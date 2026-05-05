@@ -33,21 +33,21 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<ClienteResponseDto>> buscaClientePorId(@PathVariable int id){
+    public ResponseEntity<ApiResponse<ClienteResponseDto>> buscaClientePorId(@PathVariable Long id){
         var response = clienteService.consultaClientePorId(id);
         return ResponseEntity.ok().body(response);
 
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<ClienteResponseDto>> editaClientePorId(@PathVariable int id, @RequestBody ClienteRequestDto clienteRequestDto){
+    public ResponseEntity<ApiResponse<ClienteResponseDto>> editaClientePorId(@PathVariable Long id, @RequestBody ClienteRequestDto clienteRequestDto){
         var response = clienteService.editaCliente(id, clienteRequestDto);
         return ResponseEntity.ok().body(response);
     }
 
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletaClientePorId(@PathVariable int id){
+    public ResponseEntity<Void> deletaClientePorId(@PathVariable Long id){
         clienteService.deletarUmCliente(id);
         return ResponseEntity.noContent().build();
     }
