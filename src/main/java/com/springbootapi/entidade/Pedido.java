@@ -1,6 +1,5 @@
 package com.springbootapi.entidade;
 
-import com.springbootapi.entidade.embedded.Status;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -25,14 +24,15 @@ public class Pedido {
     @Column(name = "valorTotal")
     private BigDecimal valorTotal;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private Status status;
-
     @Column(name = "dataPedido")
     private LocalDateTime dataPedido;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+
+    @ManyToOne
+    @JoinColumn(name = "status_id", nullable = false)
+    private Status status;
+
 }

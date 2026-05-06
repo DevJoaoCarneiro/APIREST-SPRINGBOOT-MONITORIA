@@ -2,10 +2,13 @@ package com.springbootapi.controller;
 
 import com.springbootapi.dto.request.PedidoRequestDto;
 import com.springbootapi.dto.response.ApiResponse;
+import com.springbootapi.dto.response.PedidoResponseDto;
 import com.springbootapi.service.PedidoService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/pedido")
@@ -21,5 +24,17 @@ public class PedidoController {
     public ResponseEntity<ApiResponse> criarPedido(@PathVariable Long id, @RequestBody PedidoRequestDto pedidoRequestDto){
         var response = pedidoService.criarNovoPedido(id, pedidoRequestDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponse<List<PedidoResponseDto>>> buscarTodosOsPedidos(){
+        var response = pedidoService.consultaTodosOsPedidos();
+        return ResponseEntity.ok().body(response);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<PedidoResponseDto>> buscarPedidoPorId(@PathVariable Long id){
+        var response = pedidoService.consultaPedidoPorId(id);
+        return ResponseEntity.ok().body(response);
     }
 }

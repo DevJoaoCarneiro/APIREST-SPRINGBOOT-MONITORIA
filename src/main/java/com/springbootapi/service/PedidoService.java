@@ -5,33 +5,44 @@ import com.springbootapi.dto.response.ApiResponse;
 import com.springbootapi.dto.response.PedidoResponseDto;
 import com.springbootapi.entidade.Cliente;
 import com.springbootapi.entidade.Pedido;
+import com.springbootapi.entidade.Status;
 import com.springbootapi.expections.ResourceNotFoundExpection;
 import com.springbootapi.repository.ClienteRepository;
 import com.springbootapi.repository.PedidoRepository;
+import com.springbootapi.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 public class PedidoService {
 
     private final ClienteRepository clienteRepository;
     private final PedidoRepository pedidoRepository;
+    private final StatusRepository statusRepository;
 
-    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository) {
+
+    public PedidoService(ClienteRepository clienteRepository, PedidoRepository pedidoRepository, StatusRepository statusRepository) {
         this.clienteRepository = clienteRepository;
         this.pedidoRepository = pedidoRepository;
+        this.statusRepository = statusRepository;
     }
 
     public ApiResponse<PedidoResponseDto> criarNovoPedido(Long id, PedidoRequestDto pedidoRequestDto) {
             Cliente cliente = clienteRepository.findById(id)
                     .orElseThrow(() -> new ResourceNotFoundExpection("Cliente não encontrado"));
 
+            Status status = statusRepository.findById(pedidoRequestDto.statusId())
+                    .orElseThrow(() -> new ResourceNotFoundExpection("Status não encontado"));
+
+
+
             Pedido pedido = new Pedido();
 
             pedido.setDataPedido(LocalDateTime.now());
             pedido.setValorTotal(pedidoRequestDto.valorTotal());
-            pedido.setStatus(pedidoRequestDto.status());
+            pedido.setStatus(status);
             pedido.setCliente(cliente);
 
             pedidoRepository.save(pedido);
@@ -40,7 +51,7 @@ public class PedidoService {
                     pedido.getId(),
                     pedido.getDataPedido(),
                     pedido.getValorTotal(),
-                    pedido.getStatus(),
+                    pedido.getStatus().getNome(),
                     cliente.getId(),
                     cliente.getNome()
             );
@@ -51,5 +62,45 @@ public class PedidoService {
                     dto
             );
 
+    }
+
+    public ApiResponse<List<PedidoResponseDto>> consultaTodosOsPedidos() {
+        List<PedidoResponseDto> dto = pedidoRepository.findAll()
+                .stream()
+                .map(x -> new PedidoResponseDto(
+                        x.getId(),
+                        x.getDataPedido(),
+                        x.getValorTotal(),
+                        x.getStatus().getNome(),
+                        x.getCliente().getId(),
+                        x.getCliente().getNome()
+                )).toList();
+
+        return new ApiResponse<>(
+                "Consulta realizada com sucesso",
+                "sucesso",
+                dto
+        );
+
+    }
+
+    public ApiResponse<PedidoResponseDto> consultaPedidoPorId(Long id) {
+        Pedido pedido = pedidoRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundExpection("Pedido não encontrado"));
+
+        PedidoResponseDto dto = new PedidoResponseDto(
+                pedido.getId(),
+                pedido.getDataPedido(),
+                pedido.getValorTotal(),
+                pedido.getStatus().getNome(),
+                pedido.getCliente().getId(),
+                pedido.getCliente().getNome()
+        );
+
+        return new ApiResponse<>(
+                "Pedido consultado com sucesso",
+                "sucesso",
+                dto
+        );
     }
 }
