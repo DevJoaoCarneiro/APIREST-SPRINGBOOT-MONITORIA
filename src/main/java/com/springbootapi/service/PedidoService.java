@@ -103,4 +103,41 @@ public class PedidoService {
                 dto
         );
     }
+
+    public ApiResponse<PedidoResponseDto> editarStatusPedido(Long pedidoId, Long statusId) {
+
+        //ATUALIZAR O STATUS DO PEDIDO
+        //ACHAR O PEDIDO
+        Pedido pedido = pedidoRepository.findById(pedidoId)
+                .orElseThrow(() -> new ResourceNotFoundExpection("Pedido nao encontrado"));
+
+        //VERIFICO SE O STATUS QUE O AMIGAO PASSOU É VALIDO
+        Status status = statusRepository.findById(statusId)
+                .orElseThrow(() -> new ResourceNotFoundExpection("Status do pedido nao encontrado"));
+
+
+        //ATUALIZO O REGISTRO QUE BUSQUEI ANTERIORMENTE
+        pedido.setStatus(status);
+
+        //Salvar o novo status
+        pedidoRepository.save(pedido);
+
+        //Convertendo a entidade para RESPONSE (DTO)
+        PedidoResponseDto dto = new PedidoResponseDto(
+                pedido.getId(),
+                pedido.getDataPedido(),
+                pedido.getValorTotal(),
+                pedido.getStatus().getNome(),
+                pedido.getCliente().getId(),
+                pedido.getCliente().getNome()
+
+        );
+
+        //DEVOLVO A MENSAGEM DE SUCESSO
+        return new ApiResponse<>(
+                "Status do pedido atualizado com sucesso",
+                "sucesso",
+                dto
+        );
+    }
 }
